@@ -1,0 +1,36 @@
+﻿@if(ShowDownloadManager){
+
+<div style="border: 2px solid black"></div>
+<h3>DownloadManager</h3>
+<br />
+<br />
+
+<div id=threaddownloadmain>
+    <table class="table">
+         <thead>
+        <tr>                        
+            <th>Post Id</th>
+            <th>File Name</th>
+            <th>File Extension</th>
+            <th>File Size(KB)</th>            
+        </tr>
+    </thead>
+    <tbody>
+        @if(Posts != null && Posts.Any()){
+           @foreach (var post in Posts)
+            {                
+                if (@post.FileSize > 1)
+                {                    
+                    <tr>                        
+                        <td>@post.PostNumber</td>
+                        <td>@post.FileName.Trim()</td>
+                        <td>@post.FileExtension</td>
+                        <td>@post.FileSize</td>
+                    </tr>                    
+                }
+            }
+         }
+     </tbody>
+    </table>
+</div>
+}

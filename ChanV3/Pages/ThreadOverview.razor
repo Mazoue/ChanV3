@@ -1,0 +1,62 @@
+﻿@page "/thread/{boardId}/{threadId}"
+@page "/thread/{boardId}/{threadId}/{threadTitle}"
+
+<h1>@DisplayTitle</h1>
+<br />
+<br />
+<div id=threadoverviewmain>
+<table class="headerlayouttable" style="width:100%">
+    <tr>
+         <td> <input type="checkbox" @onchange="eventArgs => { SelectAllPosts(eventArgs.Value); }" />Select All</td>
+         <td style="text-align:right"><button type="button" @onclick="@(async () => await DownloadFiles(@DisplayTitle,@Posts.PostCollection.Where(x => x.Checked),@BoardId))"> Download</button></td>
+    </tr>
+</table>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Preview</th>
+            <th>Post Id</th>
+            <th>File Name</th>
+            <th>File Extension</th>
+            <th>File Size(KB)</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Posts != null)
+        {
+            var thumbnailPlaceholderCount = 0;
+
+            foreach (var post in Posts.PostCollection.ToList())
+            {                
+                if (@post.fsize > 1)
+                {                    
+                    var thumbnailPlaceholderId = $"thumbnailPlaceholderId{thumbnailPlaceholderCount}";
+                    <tr>                        
+                        <td> <input @bind=@post.Checked type="checkbox" /></td>
+                        @if(GeneralConfigService.ShowImagePreview()){
+                                <td><img id="@_thumbnailPlaceHolderId" /></td>
+                            }
+                            else
+                            {
+                                <td>Hiding Preview to increase speed</td>
+                            }
+                        <td>@post.no</td>
+                        <td>@post.filename.Trim()</td>
+                        <td>@post.ext</td>
+                        <td>@ConvertBytesToKiloBytes(@post.fsize)</td>
+                        <td style="overflow-y:scroll;overflow-x:hidden;">@((MarkupString)post.com)</td>
+                        <td style="display: none">@(SetImageUsingStreamingAsync(post.tim.ToString(), thumbnailPlaceholderId))</td>
+                    </tr>
+                    thumbnailPlaceholderCount+=1;  
+                }
+            }
+        }
+    </tbody>
+</table>
+</div>
+
+ <DownloadManager @ref="downloadManager"></DownloadManager>
